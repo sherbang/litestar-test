@@ -1,0 +1,119 @@
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "--strict-markers --strict-config"
+asyncio_mode = "auto"
+norecursedirs = [".git", ".tox", ".env", ".venv"]
+testpaths = ["pytests"]
+timeout = 60
+pythonpath = ["pysrc"]
+
+[tool.poetry]
+name = "boilerplate"
+version = "0.0.0"
+description = ""
+authors = ["Gozynta <support@gozynta.com>"]
+license = "Proprietary"
+readme = "README.md"
+classifiers = ["Private :: Do Not Upload", "Typing :: Typed"]
+packages = [{ include = "fizzbuzz", from = "pysrc" }]
+include = ["LICENSE"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=7.1"
+pytest-asyncio = ">=0.18.3"
+pytest-cov = ">=4.1.0"
+pytest-timeout = ">=2.1"
+
+[tool.ruff]
+target-version = "py312"
+
+src = ["pysrc", "pytests"]
+line-length = 119
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+# See: https://docs.astral.sh/ruff/rules/
+select = [
+    "A",
+    "ANN",
+    "ASYNC",
+    "B",
+    "C",
+    "C90",
+    "DTZ",
+    "E",
+    "F",
+    "FBT",
+    "FIX",
+    "FLY",
+    "FURB",
+    "I",
+    "INP",
+    "N8",
+    "PERF",
+    "PT",
+    "PTH",
+    "RET",
+    "RUF",
+    "S",
+    "SIM",
+    "T10",
+    "TCH",
+    "TID",
+    "TRY",
+    "UP",
+]
+# ANN101,ANN102 annotating self,cls is silly
+# E501 is replaced by flake8-bugbear B950
+# E722 is replaced by flake8-bugbear B001
+# PT004 - fixing this leads to warnings about unused function on autouse fixtures
+ignore = ["ANN101", "ANN102", "E402", "E501", "E722", "PT004"]
+
+[tool.ruff.lint.flake8-tidy-imports]
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"autoviv".msg = "autoviv is not typing friendly, replace with typed models"
+"restresponse".msg = "RestResponse makes typing difficult and masks errors, phase usage out."
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+
+[tool.ruff.lint.per-file-ignores]
+# ANN201 - Documenting return types on pytest tests is pointless
+# S101 - Using assert in tests is fine
+# TRY002-TRY003 - Not so concerned about clean exceptions when raised by test cases
+"pytests/**" = ["ANN201", "S101", "TRY"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pyright]
+typeCheckingMode = "strict"
+deprecateTypingAliases = true
+reportDeprecated = "warning"
+
+# This has the side-effect of making the Quick-Fix in VSCode add the pyright comment format.
+# https://github.com/microsoft/pylance-release/issues/4494
+enableTypeIgnoreComments = false
+
+# We're going to need to ease into these...  A lot of issues with generic types.
+reportUnknownArgumentType = "warning"
+reportUnknownParameterType = "warning"
+reportUnknownVariableType = "warning"
+reportMissingTypeArgument = "warning"
+reportImplicitOverride = "error"
+reportUnnecessaryTypeIgnoreComment = "error"
+
+reportMissingTypeStubs = "none"  # This causes a lot of errors against imported libraries, how to fix?
+reportUnusedImport = "none"      # This duplicates a ruff check
+reportUnusedVariable = "none"    # This duplicates a ruff check
+reportUnknownMemberType = "none" # This is usually problems with imported libraries, just makes a lot of noise.
+
+# These get in the way of checking that runtime times are as strict as static type checking in cases where we want that.
+reportUnnecessaryComparison = "warning"
+reportUnnecessaryIsInstance = "warning"
