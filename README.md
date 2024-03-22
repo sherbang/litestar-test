@@ -40,7 +40,7 @@ pre-commit install
 
 ### Running the app
 ```bash
-poetry run ./pysrc/fizzbuzz
+poetry run python -m fizzbuzz
 ```
 
 ### Running tests
